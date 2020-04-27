@@ -21,15 +21,20 @@ def get_df(df=None, encode='utf-8', delimiter=','):
 
 def sidebar():
     st.sidebar.title('Welcome!')
-    st.sidebar.subheader('Exploratory Data Analysis App')
-    st.sidebar.image('https://media.giphy.com/media/DHqth0hVQoIzS/giphy.gif', width=300)
-    st.sidebar.title('About')
-    st.sidebar.info(
+    st.sidebar.title('Project')
+    st.sidebar.subheader('Exploratory Data Analysis App :')
+    st.sidebar.markdown(
         '''
-        This app is a data explorer tool developed by [Matheus Bosa](https://www.linkedin.com/in/matheusbosa/).
+        This app is a data explorer tool to help data scientists get their dataset first insights.
         Code is available on [GitHub](https://github.com/bosamatheus/eda).
         '''
     )
+    st.sidebar.title('About')    
+    st.sidebar.image('img/matheusbosa.jpg', width=200)
+    st.sidebar.markdown('Developed by **Matheus Bosa.**')
+    st.sidebar.markdown('Bachelor degree in Electrical Engineering from the Federal University of Paraná (UFPR).')
+    st.sidebar.markdown('My [LinkedIn](https://www.linkedin.com/in/matheusbosa/) and [Portfolio](https://bosamatheus.github.io/).')
+    
 
 def run():
     st.subheader('Preparations')
@@ -41,12 +46,12 @@ def run():
         df_info = pd.DataFrame({'names': df.columns, 'types': df.dtypes, 'NA #': df.isna().sum(), 'NA %': (df.isna().sum() / df.shape[0]) * 100})
 
         if st.checkbox('View data'):
-            visualization = st.radio('Visualization:', ('Head', 'Tail', 'First nth rows'))
-            if visualization == 'Head':
+            view = st.radio('View:', ('Head', 'Tail', 'First nth rows'))
+            if view == 'Head':
                 st.write(df.head())
-            elif visualization == 'Tail':
+            elif view == 'Tail':
                 st.write(df.tail())
-            elif visualization == 'First nth rows':
+            elif view == 'First nth rows':
                 n_rows = st.slider('How many rows?', min_value=1, max_value=df.shape[0])
                 st.dataframe(df.head(n_rows))
 
@@ -66,24 +71,35 @@ def run():
             st.write('float64 columns:', ', '.join(df_info[df_info['types'] == 'float64']['names'].tolist()))
             st.write('object columns:', ', '.join(df_info[df_info['types'] == 'object']['names'].tolist()))
 
-        summary = st.radio('Columns info:', ('Summary of dataset', 'Missing data', 'Correlation'))
-        if summary == 'Summary of dataset':
+        if st.checkbox('Numeric summary'):
             st.table(df.describe())
-        elif summary == 'Missing data':
-            st.write(df_info[df_info['NA #'] != 0][['types', 'NA %']])
-            st.bar_chart(df_info['NA %'].sort_values(ascending=False))
-        elif summary == 'Correlation':
+        
+        st.subheader('Data Visualization')
+        vis = st.radio('Plot:', ('Histogram', 'Barplot', 'Correlation'))
+        if vis == 'Histogram':
+            # TODO
+            pass
+        elif vis == 'Barplot':
+            # TODO
+            pass
+        elif vis == 'Correlation':
             corr = df.corr()
             sns.heatmap(corr, 
                 cmap='viridis', vmax=1.0, vmin=-1.0, linewidths=0.1,
                 annot=True, annot_kws={"size": 8}, square=True);
             st.pyplot()
 
-        st.subheader('Inpute Missing Data')
-        if st.checkbox('Numeric data'):
-            input_numeric_na(df, df_info)
+        st.subheader('Missing Data')
+        if st.checkbox('NA values'):
+            st.write(df_info[df_info['NA #'] != 0][['types', 'NA %']])
+            st.bar_chart(df_info['NA %'].sort_values(ascending=False))
+        if st.checkbox('Drop NA values'):
+            # TODO
+            pass
+        if st.checkbox('Inpute numeric missing data'):
+            inpute_numeric_na(df, df_info)
 
-def input_numeric_na(df, df_info):
+def inpute_numeric_na(df, df_info):
     series_aux = df_info.query('(types == "float64" | types == "int64")')['NA #'] != 0
     columns_numeric_na = series_aux[series_aux].index.tolist()
     columns_input = st.multiselect('Select columns with NA values:', columns_numeric_na)
