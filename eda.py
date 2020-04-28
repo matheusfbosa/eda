@@ -172,7 +172,7 @@ def about():
         Feel free to reach out for collab! :grin:
         '''
     )
-    st.sidebar.image('img/matheusbosa.jpg', width=200)
+    st.sidebar.image('img/bosa.jpg', width=200)
     st.sidebar.markdown('Developed by **Matheus Bosa.**')
     st.sidebar.markdown('Bachelor degree in Electrical Engineering from the Federal University of Paraná (UFPR).')
     st.sidebar.markdown('My [LinkedIn](https://www.linkedin.com/in/matheusbosa/) and [Portfolio](https://bosamatheus.github.io/).')
